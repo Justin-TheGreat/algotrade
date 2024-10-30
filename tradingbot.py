@@ -4,12 +4,20 @@ from lumibot.strategies.strategy import Strategy
 from lumibot.traders import Trader
 from datetime import datetime 
 from alpaca_trade_api import REST 
-from timedelta import Timedelta 
+from datetime import timedelta
+from timedelta import Timedelta
 from finbert_utils import estimate_sentiment
+import os
+from dotenv import load_dotenv
 
-API_KEY = "YOUR API KEY" 
-API_SECRET = "YOUR API SECRET" 
-BASE_URL = "https://paper-api.alpaca.markets"
+# Load environment variables from .env file
+load_dotenv()
+
+# Access environment variables
+API_KEY = os.getenv("API_KEY")
+API_SECRET = os.getenv("API_SECRET")
+BASE_URL = os.getenv("BASE_URL")
+
 
 ALPACA_CREDS = {
     "API_KEY":API_KEY, 
@@ -33,7 +41,7 @@ class MLTrader(Strategy):
 
     def get_dates(self): 
         today = self.get_datetime()
-        three_days_prior = today - Timedelta(days=3)
+        three_days_prior = today - Timedelta(days=2)
         return today.strftime('%Y-%m-%d'), three_days_prior.strftime('%Y-%m-%d')
 
     def get_sentiment(self): 
@@ -77,7 +85,7 @@ class MLTrader(Strategy):
                 self.submit_order(order) 
                 self.last_trade = "sell"
 
-start_date = datetime(2020,1,1)
+start_date = datetime(2021,1,1)
 end_date = datetime(2023,12,31) 
 broker = Alpaca(ALPACA_CREDS) 
 strategy = MLTrader(name='mlstrat', broker=broker, 
